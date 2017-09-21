@@ -32,14 +32,25 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
         <item>5</item>
+        <item>7</item>
         <item>9</item>
+        <item>12</item>
         <item>14</item>
+        <item>19</item>
         <item>25</item>       <!-- twilight -->
+        <item>37</item>
         <item>50</item>       <!-- dim indoor -->
+        <item>75</item>
         <item>100</item>      <!-- home -->
+        <item>150</item>
         <item>200</item>
+        <item>250</item>
         <item>300</item>      <!-- office -->
+        <item>400</item>
         <item>500</item>      <!-- sunrise -->
         <item>750</item>
         <item>1000</item>     <!-- overcast -->
@@ -53,14 +64,25 @@
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
         <item>5</item>
+        <item>7</item>
         <item>10</item>
+        <item>11</item>
         <item>12</item>
+        <item>15</item>
         <item>17</item>
+        <item>23</item>
         <item>29</item>
+        <item>32</item>
         <item>35</item>
+        <item>41</item>
         <item>47</item>
+        <item>61</item>
         <item>75</item>
+        <item>95</item>
         <item>114</item>
         <item>130</item>
         <item>152</item>
@@ -73,7 +95,7 @@
     <!-- Screen brightness used to dim the screen when the user activity
          timeout expires.  May be less than the minimum allowed brightness setting
          that can be set by the user. -->
-    <integer name="config_screenBrightnessDim">10</integer>
+    <integer name="config_screenBrightnessDim">15</integer>
 
     <!-- Default screen brightness setting.
          Must be in the range specified by minimum and maximum. -->
