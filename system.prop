@@ -167,7 +167,7 @@ telephony.lteOnCdmaDevice=1
 ro.telephony.ril_class=MarkwRIL
 
 # Perf
-ro.vendor.extension_library=libqti-perfd-client.so
+#ro.vendor.extension_library=libqti-perfd-client.so
 ro.vendor.gt_library=libqti-gt.so
 ro.vendor.at_library=libqti-at.so
 ro.am.reschedule_service=true
