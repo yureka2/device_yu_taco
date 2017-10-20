@@ -298,7 +298,7 @@ case "$target" in
                 echo 0 > /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
                 echo "85 1401600:80" > /sys/devices/system/cpu/cpufreq/interactive/target_loads
                 echo 29000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-                
+
                 # re-enable thermal & BCL core_control now
                 echo 1 > /sys/module/msm_thermal/core_control/enabled
                 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
@@ -351,8 +351,8 @@ esac
 # Post-setup services
 case "$target" in
     "msm8937" | "msm8953")
-        echo 256 > /sys/block/mmcblk0/bdi/read_ahead_kb
-        echo 256 > /sys/block/mmcblk0/queue/read_ahead_kb
+        echo 512 > /sys/block/mmcblk0/bdi/read_ahead_kb
+        echo 512 > /sys/block/mmcblk0/queue/read_ahead_kb
         setprop sys.post_boot.parsed 1
         start gamed
     ;;
