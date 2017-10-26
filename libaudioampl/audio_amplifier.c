@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 The CyanogenMod Open Source Project
+ * Copyright (C) 2017 Nikolay Karev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "amplifier_lenovo_p2"
-//#define LOG_NDEBUG 0
+#define LOG_TAG "audio_amplifier"
 
 #include <time.h>
 #include <system/audio.h>
 #include <platform.h>
 
-#include <stdint.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/ioctl.h>
-//#include <linux/i2c-dev.h>
+
 #include <fcntl.h>
 #include <cutils/log.h>
-#include <cutils/str_parms.h>
 
 #include <hardware/audio_amplifier.h>
 #include <hardware/hardware.h>
 
-//eplace with actual kernel inlcude? 
-#define ENABLE_MI2S_CLK 0x0709 /* Enable mi2s clock */ 
-#define DEVICE_NAME "/dev/i2c_smartpa"
+#define DEVICE_PATH "/sys/audio_amplifier/enable"
 
 static int is_speaker(uint32_t snd_device) {
     int speaker = 0;
@@ -55,9 +48,34 @@ static int is_speaker(uint32_t snd_device) {
     return speaker;
 }
 
-static int is_voice_speaker(uint32_t snd_device) {
-    return snd_device == SND_DEVICE_OUT_VOICE_SPEAKER;
+static inline int write_int(char const* path, int value)
+{
+    int fd;
+    static int already_warned = 0;
+
+    fd = open(path, O_RDWR);
+    if (fd >= 0) {
+        char buffer[20];
+        int bytes = snprintf(buffer, sizeof(buffer), "%d\n", value);
+        ssize_t amt = write(fd, buffer, (size_t)bytes);
+        close(fd);
+        return amt == -1 ? -errno : 0;
+    } else {
+        if (already_warned == 0) {
+            ALOGE("write_int failed to open %s\n", path);
+            already_warned = 1;
+        }
+        return -errno;
+    }
 }
+static inline int amplifier_enable() {
+  return write_int(DEVICE_PATH, 1);
+}
+
+static inline int amplifier_disable() {
+  return write_int(DEVICE_PATH, 0);
+}
+
 
 static int amp_set_input_devices(amplifier_device_t *device, uint32_t devices)
 {
@@ -72,24 +90,11 @@ static int amp_set_output_devices(amplifier_device_t *device, uint32_t devices)
 static int amp_enable_output_devices(amplifier_device_t *device,
         uint32_t devices, bool enable)
 {
-    int fd = open(DEVICE_NAME, O_RDWR, 0);
-    if (fd < 0) {
-        ALOGE("%s:%d: Failed to open file %s\n",
-                __func__, __LINE__, DEVICE_NAME);
-        return -errno;
-    }
     if (is_speaker(devices)) {
         if (enable) {
-            if (is_voice_speaker(devices)) {
-                ALOGI("%s:%d: Enabling amplifier voice mode\n", __func__, __LINE__);
-                ioctl(fd,ENABLE_MI2S_CLK, 2);
-            } else {
-                ALOGI("%s:%d: Enabling amplifier music mode\n", __func__, __LINE__);
-                ioctl(fd,ENABLE_MI2S_CLK,1);
-            }
+            amplifier_enable();
         } else {
-            ALOGI("%s:%d: Disabling amplifier\n", __func__, __LINE__);
-            ioctl(fd,ENABLE_MI2S_CLK,0);
+            amplifier_disable();
         }
     }
     return 0;
@@ -121,6 +126,7 @@ static int amp_input_stream_start(amplifier_device_t *device,
 static int amp_output_stream_standby(amplifier_device_t *device,
         struct audio_stream_out *stream)
 {
+    amplifier_disable();
     return 0;
 }
 
@@ -191,8 +197,8 @@ amplifier_module_t HAL_MODULE_INFO_SYM = {
         .module_api_version = AMPLIFIER_MODULE_API_VERSION_0_1,
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = AMPLIFIER_HARDWARE_MODULE_ID,
-        .name = "Lenovo P2 audio amplifier HAL",
-        .author = "The CyanogenMod Open Source Project",
+        .name = "Markw audio amplifier HAL",
+        .author = "Nikolay Karev",
         .methods = &hal_module_methods,
     },
 };
