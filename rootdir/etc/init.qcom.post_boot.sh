@@ -298,6 +298,8 @@ case "$target" in
                 echo 0 > /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
                 echo "85 1401600:80" > /sys/devices/system/cpu/cpufreq/interactive/target_loads
                 echo 29000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
+                echo 652400 > /sys/devices/system/cpu/cpufreq/interactive/screen_off_maxfreq
+                echo 652400 > /sys/devices/system/cpu/cpufreq/interactive/screen_on_minfreq
 
                 # re-enable thermal & BCL core_control now
                 echo 1 > /sys/module/msm_thermal/core_control/enabled
@@ -386,3 +388,6 @@ case "$console_config" in
         echo "Enable console config to $console_config"
         ;;
 esac
+
+# Switch TCP congestion control to CDG
+echo cdg > /proc/sys/net/ipv4/tcp_congestion_control
