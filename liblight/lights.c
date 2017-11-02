@@ -41,6 +41,8 @@ static struct light_state_t g_notification;
 static struct light_state_t g_battery;
 static int g_attention = 0;
 
+#define RAMP_STEP_DURATION 1
+
 char const*const RED_LED_FILE
         = "/sys/class/leds/red/brightness";
 
@@ -65,6 +67,15 @@ char const*const GREEN_BLINK_FILE
 char const*const BLUE_BLINK_FILE
         = "/sys/class/leds/blue/blink";
 
+char const*const RED_BLINK_TIMING_FILE
+        = "/sys/class/leds/red/led_time";
+
+char const*const GREEN_BLINK_TIMING_FILE
+        = "/sys/class/leds/green/led_time";
+
+char const*const BLUE_BLINK_TIMING_FILE
+        = "/sys/class/leds/blue/led_time";
+
 /**
  * device methods
  */
@@ -75,8 +86,7 @@ void init_globals(void)
     pthread_mutex_init(&g_lock, NULL);
 }
 
-static int
-write_int(char const* path, int value)
+static int write_int(char const* path, int value)
 {
     int fd;
     static int already_warned = 0;
@@ -97,8 +107,29 @@ write_int(char const* path, int value)
     }
 }
 
-static int
-is_lit(struct light_state_t const* state)
+static int write_str(char const* path, char* value)
+{
+    int fd;
+    static int already_warned = 0;
+
+    fd = open(path, O_RDWR);
+    if (fd >= 0) {
+        char buffer[1024];
+        int bytes = snprintf(buffer, sizeof(buffer), "%s\n", value);
+        ssize_t amt = write(fd, buffer, (size_t)bytes);
+        close(fd);
+        return amt == -1 ? -errno : 0;
+    } else {
+        if (already_warned == 0) {
+            ALOGE("%s: failed to open %s\n", __func__, path);
+            already_warned = 1;
+        }
+        return -errno;
+    }
+}
+
+
+static int is_lit(struct light_state_t const* state)
 {
     return state->color & 0x00ffffff;
 }
@@ -126,8 +157,120 @@ set_light_backlight(struct light_device_t* dev,
     return err;
 }
 
-static int
-set_speaker_light_locked(struct light_device_t* dev,
+static inline int set_notification_led(unsigned int color) {
+  int red, green, blue;
+  red = (color >> 16) & 0xFF;
+  green = (color >> 8) & 0xFF;
+  blue = color & 0xFF;
+  write_int(RED_LED_FILE, red);
+  write_int(GREEN_LED_FILE, green);
+  write_int(BLUE_LED_FILE, blue);
+
+  // Disable blinking
+  if (red == 0 && green == 0 && blue == 0) {
+      write_int(RED_BLINK_FILE, 0);
+      write_int(GREEN_BLINK_FILE, 0);
+      write_int(BLUE_BLINK_FILE, 0);
+  }
+  return 0;
+}
+
+
+static inline int set_notification_blink(unsigned int color, int on, int off) {
+  int red, green, blue;
+  int rise, hold, fall;
+
+  set_notification_led(0);
+
+  red = (color >> 16) & 0xFF;
+  green = (color >> 8) & 0xFF;
+  blue = color & 0xFF;
+
+  //red = red * 0.21;
+  //green = green * 0.71;
+  //blue = blue * 0.07;
+
+  rise = RAMP_STEP_DURATION;
+  hold = on - (rise * 2);
+  fall = RAMP_STEP_DURATION;
+  if (rise + fall > hold) {
+    hold = 0;
+    rise = hold / 2;
+    fall = hold / 2;
+  }
+
+  char buffer[20];
+  memset(buffer, 0, 20 * sizeof(char));
+  snprintf(buffer, sizeof(buffer), "%d %d %d %d\n", rise, hold, fall, off);
+
+  if (red > green + blue) {
+      write_int(RED_BLINK_FILE, 1);
+      write_str(RED_BLINK_TIMING_FILE, buffer);
+      write_int(GREEN_BLINK_FILE, 0);
+      write_int(BLUE_BLINK_FILE, 0);
+      ALOGW("Blink red");
+  }
+
+  if (green > red + blue) {
+      write_int(GREEN_BLINK_FILE, 1);
+      write_str(GREEN_BLINK_TIMING_FILE, buffer);
+      write_int(RED_BLINK_FILE, 0);
+      write_int(BLUE_BLINK_FILE, 0);
+      ALOGW("Blink green");
+  }
+
+  if (blue > green + red) {
+    write_int(BLUE_BLINK_FILE, 1);
+    write_str(BLUE_BLINK_TIMING_FILE, buffer);
+    write_int(GREEN_BLINK_FILE, 0);
+    write_int(RED_BLINK_FILE, 0);
+    ALOGW("Blink white");
+  }
+
+  if (red == green && red == blue) {
+    write_int(RED_BLINK_FILE, 1);
+    write_str(RED_BLINK_TIMING_FILE, buffer);
+    write_int(GREEN_BLINK_FILE, 1);
+    write_str(GREEN_BLINK_TIMING_FILE, buffer);
+    write_int(BLUE_BLINK_FILE, 1);
+    write_str(BLUE_BLINK_TIMING_FILE, buffer);
+    ALOGW("Blink white");
+  }
+
+  if (red < (green + blue) / 2) {
+    write_int(BLUE_BLINK_FILE, 1);
+    write_str(BLUE_BLINK_TIMING_FILE, buffer);
+    write_int(GREEN_BLINK_FILE, 1);
+    write_str(GREEN_BLINK_TIMING_FILE, buffer);
+    write_int(RED_BLINK_FILE, 0);
+    ALOGW("Blink cyan");
+  }
+  if (green < (red + blue) / 2) {
+    write_int(BLUE_BLINK_FILE, 1);
+    write_str(BLUE_BLINK_TIMING_FILE, buffer);
+    write_int(RED_BLINK_FILE, 1);
+    write_str(RED_BLINK_TIMING_FILE, buffer);
+    write_int(GREEN_BLINK_FILE, 0);
+    ALOGW("Blink magenta");
+  }
+
+  if (blue < (red + green) / 2) {
+    write_int(RED_BLINK_FILE, 1);
+    write_str(RED_BLINK_TIMING_FILE, buffer);
+    write_int(GREEN_BLINK_FILE, 1);
+    write_str(GREEN_BLINK_TIMING_FILE, buffer);
+    write_int(BLUE_BLINK_FILE, 0);
+    ALOGW("Blink orange");
+  }
+  return 0;
+}
+
+
+static inline int disable_notification_led() {
+  return set_notification_led(0);
+}
+
+static int set_speaker_light_locked(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     int red, green, blue;
@@ -153,64 +296,29 @@ set_speaker_light_locked(struct light_device_t* dev,
 
     colorRGB = state->color;
 
-#if 0
-    ALOGD("set_speaker_light_locked mode %d, colorRGB=%08X, onMS=%d, offMS=%d\n",
+
+    ALOGW("set_speaker_light_locked mode %d, colorRGB=%08X, onMS=%d, offMS=%d\n",
             state->flashMode, colorRGB, onMS, offMS);
-#endif
-
-    red = (colorRGB >> 16) & 0xFF;
-    green = (colorRGB >> 8) & 0xFF;
-    blue = colorRGB & 0xFF;
-
     if (onMS > 0 && offMS > 0) {
-        /*
-         * if ON time == OFF time
-         *   use blink mode 2
-         * else
-         *   use blink mode 1
-         */
-        if (onMS == offMS)
-            blink = 2;
-        else
-            blink = 1;
+        set_notification_blink(colorRGB, onMS, offMS);
     } else {
-        blink = 0;
-    }
-
-    if (blink) {
-        if (red) {
-            if (write_int(RED_BLINK_FILE, blink))
-                write_int(RED_LED_FILE, 0);
-	}
-        if (green) {
-            if (write_int(GREEN_BLINK_FILE, blink))
-                write_int(GREEN_LED_FILE, 0);
-	}
-        if (blue) {
-            if (write_int(BLUE_BLINK_FILE, blink))
-                write_int(BLUE_LED_FILE, 0);
-	}
-    } else {
-        write_int(RED_LED_FILE, red);
-        write_int(GREEN_LED_FILE, green);
-        write_int(BLUE_LED_FILE, blue);
+        set_notification_led(colorRGB);
     }
 
     return 0;
 }
 
-static void
-handle_speaker_battery_locked(struct light_device_t* dev)
+static void handle_speaker_battery_locked(struct light_device_t* dev)
 {
-    if (is_lit(&g_battery)) {
-        set_speaker_light_locked(dev, &g_battery);
-    } else {
+    if (is_lit(&g_attention))
+        set_speaker_light_locked(dev, &g_attention);
+    else if (is_lit(&g_notification))
         set_speaker_light_locked(dev, &g_notification);
-    }
+    else
+        set_speaker_light_locked(dev, &g_battery);
 }
 
-static int
-set_light_battery(struct light_device_t* dev,
+static int set_light_battery(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     pthread_mutex_lock(&g_lock);
@@ -220,8 +328,7 @@ set_light_battery(struct light_device_t* dev,
     return 0;
 }
 
-static int
-set_light_notifications(struct light_device_t* dev,
+static int set_light_notifications(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     pthread_mutex_lock(&g_lock);
@@ -231,8 +338,7 @@ set_light_notifications(struct light_device_t* dev,
     return 0;
 }
 
-static int
-set_light_attention(struct light_device_t* dev,
+static int set_light_attention(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     pthread_mutex_lock(&g_lock);
