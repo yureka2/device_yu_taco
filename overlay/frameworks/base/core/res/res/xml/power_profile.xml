@@ -28,20 +28,20 @@
        significantly, so should be measured on the shipping platform
        with a power meter. -->
   <item name="none">0</item>
-  <item name="screen.on">63</item>  <!-- ~200mA -->
-  <item name="screen.full">261</item>  <!-- ~300mA -->
+  <item name="screen.on">63</item>  <!-- screen is turned on at minimum brightness, ~200mA -->
+  <item name="screen.full">261</item>  <!-- screen is at maximum brightness, compared to screen at minimum brightness, ~300mA -->
   <item name="bluetooth.active">10</item> <!-- Bluetooth data transfer, ~10mA -->
   <item name="bluetooth.on">0.78</item>  <!-- Bluetooth on & connectable, but not connected, ~0.1mA -->
-  <item name="wifi.on">0.65</item>  <!-- ~3mA -->
+  <item name="wifi.on">0.65</item>  <!-- Wi-Fi is turned on but not receiving, transmitting, or scanning, ~2mA -->
   <item name="wifi.active">180</item>  <!-- WIFI data transfer, ~200mA -->
   <item name="wifi.scan">130</item>  <!-- WIFI network scanning, ~100mA -->
-  <item name="dsp.audio">46</item> <!-- ~10mA -->
-  <item name="dsp.video">65</item> <!-- ~50mA -->
-  <item name="camera.flashlight">160</item> <!-- Avg. power for camera flash, ~160mA -->
+  <item name="dsp.audio">46</item> <!-- audio decoding/encoding via DSP, ~14.1mA -->
+  <item name="dsp.video">65</item> <!-- video decoding via DSP, ~54mA -->
+  <item name="camera.flashlight">160</item> <!-- Avg. power for camera flash, ~200mA -->
   <item name="camera.avg">521.80</item> <!-- Avg. power use of camera in standard usecases, ~550mA -->
-  <item name="radio.active">134.84</item> <!-- ~200mA -->
+  <item name="radio.active">134.84</item> <!-- cellular radio is transmitting/receiving, ~100-300mA -->
   <item name="radio.scanning">10</item> <!-- cellular radio scanning for signal, ~10mA -->
-  <item name="gps.on">68.84</item> <!-- ~50mA -->
+  <item name="gps.on">68.84</item> <!-- GPS is acquiring a signal, ~50mA -->
   </array>
   <!-- Different CPU speeds as reported in
        /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
@@ -58,8 +58,7 @@
       <value>2016000</value> <!-- 2016 MHz CPU speed -->
       <value>2150400</value> <!-- 2150 MHz CPU speed -->
       <value>2208000</value> <!-- 2208 MHz CPU speed -->
-  <!-- Current when CPU is idle -->
-  <item name="cpu.idle">3</item>
+  </array>
   <!-- Current at each CPU speed, as per 'cpu.speeds' -->
   <array name="cpu.active">
       <value>146</value>
@@ -75,6 +74,10 @@
       <value>395</value>
       <value>445</value>
   </array>
+  <!-- Total power drawn by the system when CPUs (and the SoC) are in system suspend state. -->
+  <item name="cpu.idle">3</item>
+  <!-- CPUs are in scheduling idle state (kernel idle loop); system is not in system suspend state. -->
+  <item name="cpu.awake">3</item> 
   <!-- This is the battery capacity in mAh (measured at nominal voltage) -->
   <item name="battery.capacity">4100</item>
 </device>
