@@ -37,7 +37,7 @@
   <item name="wifi.scan">130</item>  <!-- WIFI network scanning, ~100mA -->
   <item name="dsp.audio">46</item> <!-- audio decoding/encoding via DSP, ~14.1mA -->
   <item name="dsp.video">65</item> <!-- video decoding via DSP, ~54mA -->
-  <item name="camera.flashlight">160</item> <!-- Avg. power for camera flash, ~200mA -->
+  <item name="camera.flashlight">240</item> <!-- Avg. power for camera flash, ~200mA -->
   <item name="camera.avg">521.80</item> <!-- Avg. power use of camera in standard usecases, ~550mA -->
   <item name="radio.active">134.84</item> <!-- cellular radio is transmitting/receiving, ~100-300mA -->
   <item name="radio.scanning">10</item> <!-- cellular radio scanning for signal, ~10mA -->
