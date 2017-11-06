@@ -396,3 +396,6 @@ esac
 
 # Switch TCP congestion control to CDG
 echo cdg > /proc/sys/net/ipv4/tcp_congestion_control
+
+# Disable fingerprint boost - CPU is fast enough by itself.
+echo 0 > /sys/kernel/fp_boost/enabled
