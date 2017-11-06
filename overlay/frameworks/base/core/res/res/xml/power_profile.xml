@@ -42,7 +42,6 @@
   <item name="radio.active">231.8</item> <!-- cellular radio is transmitting/receiving, ~100-300mA -->
   <item name="radio.scanning">34.2</item> <!-- cellular radio scanning for signal, ~10mA -->
   <item name="gps.on">68.84</item> <!-- GPS is acquiring a signal, ~50mA -->
-  </array>
   <!-- Different CPU speeds as reported in
        /sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state -->
   <array name="cpu.speeds">
