@@ -28,8 +28,8 @@
        significantly, so should be measured on the shipping platform
        with a power meter. -->
   <item name="none">0</item>
-  <item name="screen.on">63</item>  <!-- screen is turned on at minimum brightness, ~200mA -->
-  <item name="screen.full">261</item>  <!-- screen is at maximum brightness, compared to screen at minimum brightness, ~300mA -->
+  <item name="screen.on">35.28</item>  <!-- screen is turned on at minimum brightness, ~200mA -->
+  <item name="screen.full">314.29</item>  <!-- screen is at maximum brightness, compared to screen at minimum brightness, ~300mA -->
   <item name="bluetooth.active">10</item> <!-- Bluetooth data transfer, ~10mA -->
   <item name="bluetooth.on">0.78</item>  <!-- Bluetooth on & connectable, but not connected, ~0.1mA -->
   <item name="wifi.on">0.65</item>  <!-- Wi-Fi is turned on but not receiving, transmitting, or scanning, ~2mA -->
@@ -60,12 +60,12 @@
   </array>
   <!-- Current at each CPU speed, as per 'cpu.speeds' -->
   <array name="cpu.active">
-      <value>22.4</value>
-      <value>34.3</value>
+      <value>39.1</value>
+      <value>42.6</value>
       <value>45.2</value>
       <value>47.0</value>
       <value>67.7</value>
-      <value>60.0</value>
+      <value>71.0</value>
       <value>76.0</value>
       <value>90.0</value>
       <value>106.6</value>
