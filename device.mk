@@ -147,6 +147,8 @@ PRODUCT_PACKAGES += \
 #PRODUCT_PACKAGES += \
 #    XiaomiDoze
 
+PRODUCT_PACKAGES += \
+	ScreenWatch
 # Display Livedisplay
 PRODUCT_PACKAGES += \
     libjni_livedisplay
