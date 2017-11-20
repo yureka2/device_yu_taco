@@ -123,9 +123,13 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    Snap \
     camera.msm8953 \
-    libmm-qcamera
+    libmm-qcamera \
+    Snap
+
+# DASH technology
+PRODUCT_PACKAGES += \
+    libdashplayer
 
 # CNE
 PRODUCT_PACKAGES += \
