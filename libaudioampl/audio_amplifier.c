@@ -184,11 +184,11 @@ static int amp_set_input_devices(amplifier_device_t *device, uint32_t devices)
 
 static int amp_set_output_devices(amplifier_device_t *device, uint32_t devices)
 {
-    ALOGE("amp_set_output_devices: %d", devices);
+    /*ALOGE("amp_set_output_devices: %d", devices);
     if (!is_speaker(devices)) {
       speaker_ref_count = 0;
       amplifier_disable();
-    }
+    }*/
     return 0;
 }
 
@@ -235,7 +235,7 @@ static int amp_set_mode(amplifier_device_t *device, audio_mode_t mode)
 static int amp_output_stream_start(amplifier_device_t *device,
         struct audio_stream_out *stream, bool offload)
 {
-    struct stream_out *out = (struct stream_out*) stream;
+  /*  struct stream_out *out = (struct stream_out*) stream;
     uint32_t devices = out->devices;
     ALOGE("amp_output_stream_start: %d", devices);
     if (is_speaker(devices)) {
@@ -243,7 +243,7 @@ static int amp_output_stream_start(amplifier_device_t *device,
         amplifier_enable();
       }
       speaker_ref_count++;
-    }
+    }*/
     return 0;
 }
 
@@ -256,7 +256,7 @@ static int amp_input_stream_start(amplifier_device_t *device,
 static int amp_output_stream_standby(amplifier_device_t *device,
         struct audio_stream_out *stream)
 {
-    struct stream_out *out = (struct stream_out*) stream;
+    /*struct stream_out *out = (struct stream_out*) stream;
     uint32_t devices = out->devices;
     ALOGE("amp_output_stream_standby: %d", devices);
     if (is_speaker(devices)) {
@@ -264,7 +264,7 @@ static int amp_output_stream_standby(amplifier_device_t *device,
       if (speaker_ref_count == 0) {
         amplifier_disable();
       }
-    }
+    }*/
     return 0;
 }
 
