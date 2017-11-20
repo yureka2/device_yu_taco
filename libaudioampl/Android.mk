@@ -9,6 +9,7 @@ LOCAL_C_INCLUDES += \
 		 external/tinycompress/include \
 		 hardware/libhardware/include \
 		 system/media/audio_route/include \
+		 device/qcom/common/power \
 LOCAL_ADDITIONAL_DEPENDENCIES += $(TARGET_OUT_INTERMEDIATES)/KERNEL_OBJ/usr
 LOCAL_SHARED_LIBRARIES := liblog \
  libutils \
