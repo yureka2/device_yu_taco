@@ -127,10 +127,6 @@ PRODUCT_PACKAGES += \
     libmm-qcamera \
     Snap
 
-# DASH technology
-PRODUCT_PACKAGES += \
-    libdashplayer
-
 # CNE
 PRODUCT_PACKAGES += \
     libcnefeatureconfig
@@ -253,7 +249,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/etc/perf-profile0.conf:system/vendor/etc/perf-profile0.conf \
     $(LOCAL_PATH)/configs/etc/perf-profile1.conf:system/vendor/etc/perf-profile1.conf \
-		$(LOCAL_PATH)/configs/etc/perf-profile2.conf:system/vendor/etc/perf-profile2.conf
 
 # Power
 PRODUCT_PACKAGES += \
