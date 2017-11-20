@@ -90,6 +90,10 @@ static int amp_set_input_devices(amplifier_device_t *device, uint32_t devices)
 static int amp_set_output_devices(amplifier_device_t *device, uint32_t devices)
 {
     ALOGE("amp_set_output_devices: %d", devices);
+    if (!is_speaker(devices)) {
+      speaker_ref_count = 0;
+      amplifier_disable();
+    }
     return 0;
 }
 
