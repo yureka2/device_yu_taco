@@ -140,9 +140,6 @@ PRODUCT_PACKAGES += \
     liboverlay \
     libtinyxml
 
-# Doze mode
-#PRODUCT_PACKAGES += \
-#    XiaomiDoze
 
 # Display Livedisplay
 PRODUCT_PACKAGES += \
