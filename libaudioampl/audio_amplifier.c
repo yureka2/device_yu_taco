@@ -72,6 +72,7 @@ static inline int write_int(char const* path, int value)
         return -errno;
     }
 }
+
 static inline int amplifier_enable() {
   return write_int(DEVICE_PATH, 1);
 }
@@ -88,12 +89,23 @@ static int amp_set_input_devices(amplifier_device_t *device, uint32_t devices)
 
 static int amp_set_output_devices(amplifier_device_t *device, uint32_t devices)
 {
+    ALOGE("amp_set_output_devices: %d", devices);
     return 0;
 }
 
 static int amp_enable_output_devices(amplifier_device_t *device,
         uint32_t devices, bool enable)
 {
+    ALOGE("amp_enable_output_devices: %d, %d", devices, enable);
+    if (is_speaker(devices) && !enable) {
+      speaker_ref_count = 0;
+    }
+    if (is_speaker(devices) && enable) {
+      amplifier_enable();
+    }
+    if (is_speaker(devices) && !enable) {
+      amplifier_disable();
+    }
     return 0;
 }
 
@@ -113,6 +125,7 @@ static int amp_output_stream_start(amplifier_device_t *device,
 {
     struct stream_out *out = (struct stream_out*) stream;
     uint32_t devices = out->devices;
+    ALOGE("amp_output_stream_start: %d", devices);
     if (is_speaker(devices)) {
       if (!speaker_ref_count) {
         amplifier_enable();
@@ -133,6 +146,7 @@ static int amp_output_stream_standby(amplifier_device_t *device,
 {
     struct stream_out *out = (struct stream_out*) stream;
     uint32_t devices = out->devices;
+    ALOGE("amp_output_stream_standby: %d", devices);
     if (is_speaker(devices)) {
       speaker_ref_count--;
       if (speaker_ref_count == 0) {
