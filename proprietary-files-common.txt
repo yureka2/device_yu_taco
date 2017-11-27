@@ -474,12 +474,6 @@ vendor/lib64/libsensor_reg.so|ea21175dbe8a3aceed50d082b8342a0271f8fcc6
 vendor/lib64/sensor_calibrate.so|26bdc5ccbe4a234514df3eaf95bd0a336c8d899d
 vendor/lib64/sensors.ssc.so|74626a39e9659fb6aa52c590280bfe9d620bab9d
 
-# Thermal - from oxygen (MiMax 2)
-vendor/bin/thermal-engine|79522c9aa338691afb11d16ff728362dc272cf4b
-vendor/lib/libthermalclient.so|510d206e2e11fe029162d8f8c0de9d8eef791c32
-vendor/lib64/libthermalclient.so|ba8144945990683d995afee71630903d055b7740
-vendor/lib64/libthermalioctl.so|96439c4213a6898a7e63759104908488b8ad72c8
-
 # Time services - from oxygen (MiMax 2)
 -app/TimeService/TimeService.apk|822f00fd070baf869da560a79a15d49701d0f590
 bin/time_daemon|d3b364f5f10fd412b91da03ab24c56b216b8efd4
