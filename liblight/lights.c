@@ -253,7 +253,7 @@ adapt_colors_for_blink(int* red, int* green, int* blue)
 
 static int
 set_speaker_light_locked(struct light_device_t* dev,
-        struct light_state_t const* state, const char* light_id)
+        struct light_state_t const* state)
 {
     int alpha, red, green, blue;
     int max;
@@ -295,11 +295,7 @@ set_speaker_light_locked(struct light_device_t* dev,
     ALOGD("set_speaker_light_locked mode %d, colorRGB=%08X, onMS=%d, offMS=%d\n",
             state->flashMode, colorRGB, onMS, offMS);
 
-    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
-        alpha = 0xFF;
-    else
-        alpha = (colorRGB >> 24) & 0xFF;
-
+    alpha = (colorRGB >> 24) & 0xFF;
     red = (colorRGB >> 16) & 0xFF;
     green = (colorRGB >> 8) & 0xFF;
     blue = colorRGB & 0xFF;
@@ -376,13 +372,13 @@ set_speaker_light_locked(struct light_device_t* dev,
 static void
 handle_speaker_battery_locked(struct light_device_t* dev)
 {
-    set_speaker_light_locked(dev, NULL, "");
+    set_speaker_light_locked(dev, NULL);
     if (is_lit(&g_attention)) {
-        set_speaker_light_locked(dev, &g_attention, LIGHT_ID_ATTENTION);
+        set_speaker_light_locked(dev, &g_attention);
     } else if (is_lit(&g_notification)) {
-        set_speaker_light_locked(dev, &g_notification, LIGHT_ID_NOTIFICATIONS);
+        set_speaker_light_locked(dev, &g_notification);
     } else {
-        set_speaker_light_locked(dev, &g_battery, LIGHT_ID_BATTERY);
+        set_speaker_light_locked(dev, &g_battery);
     }
 }
 
