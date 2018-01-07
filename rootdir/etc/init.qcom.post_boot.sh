@@ -309,6 +309,10 @@ case "$target" in
                 echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_sched_load
                 echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_migration_notif
 
+                echo "1401600 1401600" > /sys/kernel/cpu_input_boost/ib_freqs
+                echo 500 > /sys/kernel/cpu_input_boost/ib_duration_ms
+                echo 1 > /sys/kernel/cpu_input_boost/enabled
+
                 # re-enable thermal & BCL core_control now
                 echo 1 > /sys/module/msm_thermal/core_control/enabled
                 for mode in /sys/devices/soc.0/qcom,bcl.*/mode
