@@ -264,6 +264,10 @@
 # lirc
 /dev/lirc0                0660   system     system
 
+#add by gbdb
+/dev/i2c-8                0660   media      media
+#add end
+
 # fpc Fingerprint
 /sys/devices/soc/soc:fpc1020        hw_reset            0220   system     system
 /sys/devices/soc/soc:fpc1020        irq	                0660   system     system

@@ -38,6 +38,13 @@ vendor/lib64/soundfx/libqcvirt.so
 system/bin/ptt_socket_app
 
 # Audio ACDB
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Bluetooth_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_General_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Global_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Handset_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Hdmi_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Headset_cal.acdb
+etc/acdbdata/MTP/msm8953-tasha-snd-card/MTP_WCD9335_Speaker_cal.acdb
 etc/acdbdata/MTP/MTP_Bluetooth_cal.acdb
 etc/acdbdata/MTP/MTP_General_cal.acdb
 etc/acdbdata/MTP/MTP_Global_cal.acdb
@@ -45,23 +52,36 @@ etc/acdbdata/MTP/MTP_Handset_cal.acdb
 etc/acdbdata/MTP/MTP_Hdmi_cal.acdb
 etc/acdbdata/MTP/MTP_Headset_cal.acdb
 etc/acdbdata/MTP/MTP_Speaker_cal.acdb
+etc/acdbdata/QRD/QRD_Bluetooth_cal.acdb
+etc/acdbdata/QRD/QRD_General_cal.acdb
+etc/acdbdata/QRD/QRD_Global_cal.acdb
+etc/acdbdata/QRD/QRD_Handset_cal.acdb
+etc/acdbdata/QRD/QRD_Hdmi_cal.acdb
+etc/acdbdata/QRD/QRD_Headset_cal.acdb
+etc/acdbdata/QRD/QRD_Speaker_cal.acdb
 
 # Camera configs
 bin/mm-qcamera-daemon
 etc/camera/csidtg_camera.xml
 etc/camera/csidtg_chromatix.xml
 etc/camera/msm8953_camera.xml
-etc/camera/ofilm_s5k3l8_f3l8yam_chromatix.xml
+etc/camera/ov13850_chromatix.xml
+etc/camera/ov13850_q13v06k_chromatix.xml
+etc/camera/ov16880_chromatix.xml
+etc/camera/ov4688_chromatix.xml
 etc/camera/ov5670_chromatix.xml
 etc/camera/ov5670_f5670bq_chromatix.xml
-etc/camera/qtech_ov5670_f5670bq_chromatix.xml
-etc/camera/qtech_s5k3l8_f3l8yam_chromatix.xml
+etc/camera/ov8856_chromatix.xml
+etc/camera/ov8858_chromatix.xml
+etc/camera/ov8865_chromatix.xml
 etc/camera/s5k3l8_chromatix.xml
 etc/camera/s5k3l8_f3l8yam_chromatix.xml
 etc/camera/s5k3l8_mono_chromatix.xml
+etc/camera/s5k3m2xm_chromatix.xml
+etc/camera/s5k3m2xm_chromatix_bear.xml
+etc/camera/s5k3m2xx_chromatix.xml
+etc/camera/s5k3p3_f3l8yam_chromatix.xml
 etc/camera/s5k4h8_chromatix.xml
-etc/camera/s5k5e8_chromatix.xml
-etc/camera/sunny_s5k3l8_f3l8yam_chromatix.xml
 
 # Camera
 vendor/lib/libChamomilePA.so
@@ -215,6 +235,34 @@ vendor/lib/libchromatix_csidtg_cpp_preview.so
 vendor/lib/libchromatix_csidtg_postproc.so
 vendor/lib/libchromatix_csidtg_preview.so
 vendor/lib/libchromatix_csidtg_zsl_preview.so
+
+# frome logcat add s5k3p3 and ov16880
+vendor/lib/libchromatix_s5k3p3_f3l8yam_common.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_hfr_120.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_hfr_60.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_hfr_90.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_liveshot.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_preview.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_snapshot.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_cpp_video.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_default_preview_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_default_video_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_default_video.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_120_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_120.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_60_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_60.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_90_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_hfr_90.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_liveshot.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_postproc.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_preview.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_snapshot.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_zsl_preview_dw9763.so
+vendor/lib/libchromatix_s5k3p3_f3l8yam_zsl_video_dw9763.so
+vendor/lib/libmmcamera_s5k3p3_eeprom.so
+vendor/lib/libmmcamera_s5k3p3.so
+
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_common.so
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_cpp_hfr_120.so
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_cpp_hfr_60.so
@@ -238,6 +286,33 @@ vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_preview.so
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_snapshot.so
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_zsl_preview_dw9763.so
 vendor/lib/libchromatix_ofilm_s5k3l8_f3l8yam_zsl_video_dw9763.so
+
+vendor/lib/libchromatix_ov16880_common.so
+vendor/lib/libchromatix_ov16880_cpp_hfr_120.so
+vendor/lib/libchromatix_ov16880_cpp_hfr_60.so
+vendor/lib/libchromatix_ov16880_cpp_hfr_90.so
+vendor/lib/libchromatix_ov16880_cpp_liveshot.so
+vendor/lib/libchromatix_ov16880_cpp_preview.so
+vendor/lib/libchromatix_ov16880_cpp_snapshot.so
+vendor/lib/libchromatix_ov16880_cpp_video.so
+vendor/lib/libchromatix_ov16880_default_preview_3a.so
+vendor/lib/libchromatix_ov16880_default_video_3a.so
+vendor/lib/libchromatix_ov16880_default_video.so
+vendor/lib/libchromatix_ov16880_hfr_120_3a.so
+vendor/lib/libchromatix_ov16880_hfr_120.so
+vendor/lib/libchromatix_ov16880_hfr_60_3a.so
+vendor/lib/libchromatix_ov16880_hfr_60.so
+vendor/lib/libchromatix_ov16880_hfr_90_3a.so
+vendor/lib/libchromatix_ov16880_hfr_90.so
+vendor/lib/libchromatix_ov16880_liveshot.so
+vendor/lib/libchromatix_ov16880_postproc.so
+vendor/lib/libchromatix_ov16880_preview.so
+vendor/lib/libchromatix_ov16880_snapshot.so
+vendor/lib/libchromatix_ov16880_zsl_preview_3a.so
+vendor/lib/libchromatix_ov16880_zsl_video_3a.so
+vendor/lib/libmmcamera_ov16880_eeprom.so
+vendor/lib/libmmcamera_ov16880.so
+
 vendor/lib/libchromatix_ov5670_a3_default_preview.so
 vendor/lib/libchromatix_ov5670_a3_default_video.so
 vendor/lib/libchromatix_ov5670_a3_hfr_120.so
@@ -491,12 +566,16 @@ etc/firmware/cpp_firmware_v1_5_2.fw
 etc/firmware/cpp_firmware_v1_6_0.fw
 etc/firmware/cpp_firmware_v1_8_0.fw
 
+# Charger
+bin/hvdcp_opti
+
 # Consumer Ir
 lib/hw/consumerir.default.so
 lib64/hw/consumerir.default.so
 
 # Display calibration
--etc/qdcm_calib_data_nt35596_1080p_video_EBBG.xml
+#-etc/qdcm_calib_data_nt35596_1080p_video_EBBG.xml
+-etc/qdcm_calib_data_otm1901a_1080p_video_DJ_otp.xml
 -etc/qdcm_calib_data_r63350_1080p_video_Tianma.xml
 
 # Fingerprint
@@ -519,3 +598,29 @@ vendor/bin/thermal-engine
 vendor/lib/libthermalclient.so
 vendor/lib64/libthermalclient.so
 vendor/lib64/libthermalioctl.so
+
+# firmware
+etc/firmware/cmcc_fp_ta.b00
+etc/firmware/cmcc_fp_ta.b01
+etc/firmware/cmcc_fp_ta.b02
+etc/firmware/cmcc_fp_ta.b03
+etc/firmware/cmcc_fp_ta.b04
+etc/firmware/cmcc_fp_ta.b05
+etc/firmware/cmcc_fp_ta.b06
+etc/firmware/cmcc_fp_ta.mdt
+etc/firmware/fpcta.b00
+etc/firmware/fpcta.b01
+etc/firmware/fpcta.b02
+etc/firmware/fpcta.b03
+etc/firmware/fpcta.b04
+etc/firmware/fpcta.b05
+etc/firmware/fpcta.b06
+etc/firmware/fpcta.mdt
+etc/firmware/goodixfp.b00
+etc/firmware/goodixfp.b01
+etc/firmware/goodixfp.b02
+etc/firmware/goodixfp.b03
+etc/firmware/goodixfp.b04
+etc/firmware/goodixfp.b05
+etc/firmware/goodixfp.b06
+etc/firmware/goodixfp.mdt

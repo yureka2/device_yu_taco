@@ -974,8 +974,9 @@
     </path>
 
     <path name="speaker">
-        <ctl name="RX3 MIX1 INP1" value="RX1" />
-        <ctl name="LINE_OUT" value="Switch" />
+        <ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia5" value="1" />
+        <!--<ctl name="RX3 MIX1 INP1" value="RX1" />
+        <ctl name="SPK" value="Switch" /> -->
     </path>
 
     <path name="speaker-and-hdmi">

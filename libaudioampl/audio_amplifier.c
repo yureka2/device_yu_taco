@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Nikolay Karev
+ * Copyright (C) 2016, The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,313 +15,161 @@
  */
 
 #define LOG_TAG "audio_amplifier"
+//#define LOG_NDEBUG 0
 
-#include <time.h>
-#include <system/audio.h>
-#include <platform.h>
-#include <dlfcn.h>
-#include <cutils/properties.h>
-
+#include <stdio.h>
 #include <stdlib.h>
-
-#include <fcntl.h>
 #include <cutils/log.h>
 #include <cutils/str_parms.h>
 
 #include <hardware/audio_amplifier.h>
-#include <hardware/hardware.h>
-#include <audio_hw.h>
+#include <system/audio.h>
 
-#define DEVICE_PATH "/sys/audio_amplifier/enable"
+#include <tinyalsa/asoundlib.h>
 
-#define MPCTLV3 1
+#define UNUSED __attribute__ ((unused))
 
-#include <performance.h>
+typedef struct amp_device {
+    amplifier_device_t amp_dev;
+    audio_mode_t mode;
+} amp_device_t;
 
-static void *handle = NULL;
-typedef int (*perf_lock_acquire_t)(int, int, int*, int);
-typedef int (*perf_lock_release_t)(int);
+static amp_device_t *amp_dev = NULL;
 
-static void *qcopt_handle;
-static perf_lock_acquire_t perf_lock_acq;
-static perf_lock_release_t perf_lock_rel;
+extern int exTfa98xx_calibration(void);
+extern int exTfa98xx_speakeron(uint32_t);
+extern int exTfa98xx_speakeroff();
 
-static char opt_lib_path[512] = {0};
+#define AMP_MIXER_CTL "Initial external PA"
 
-static int perf_lock_handle;
-static int perf_lock_opts[] = {
-  MIN_FREQ_BIG_CORE_0, 0x28b,
-  MIN_FREQ_LITTLE_CORE_0, 0x28b,
-};
-static int perf_lock_opts_size = 4;
+typedef enum {
+    SMART_PA_FOR_AUDIO = 0,
+    SMART_PA_FOR_MUSIC = 0,
+    SMART_PA_FOR_VOIP = 1,
+    SMART_PA_FIND = 1,          /* ??? */
+    SMART_PA_FOR_VOICE = 2,
+    SMART_PA_MMI = 3,           /* ??? */
+} smart_pa_mode_t;
 
-static unsigned long perf_lock_time = 0;
-
-int speaker_ref_count = 0;
-int lock_ref = 0;
-
-static int is_speaker(uint32_t snd_device) {
-    int speaker = 0;
-
-    switch (snd_device) {
-        case SND_DEVICE_OUT_SPEAKER:
-        case SND_DEVICE_OUT_SPEAKER_REVERSE:
-        case SND_DEVICE_OUT_SPEAKER_AND_HEADPHONES:
-        case SND_DEVICE_OUT_VOICE_SPEAKER:
-        case SND_DEVICE_OUT_SPEAKER_AND_HDMI:
-        case SND_DEVICE_OUT_SPEAKER_AND_USB_HEADSET:
-        case SND_DEVICE_OUT_SPEAKER_AND_ANC_HEADSET:
-            speaker = 1;
-            break;
-    }
-
-    return speaker;
-}
-
-static inline int write_int(char const* path, int value)
+static int set_clocks_enabled(bool enable)
 {
-    int fd;
-    static int already_warned = 0;
+    enum mixer_ctl_type type;
+    struct mixer_ctl *ctl;
+    struct mixer *mixer = mixer_open(0);
 
-    fd = open(path, O_RDWR);
-    if (fd >= 0) {
-        char buffer[20];
-        int bytes = snprintf(buffer, sizeof(buffer), "%d\n", value);
-        ssize_t amt = write(fd, buffer, (size_t)bytes);
-        close(fd);
-        return amt == -1 ? -errno : 0;
-    } else {
-        if (already_warned == 0) {
-            ALOGE("write_int failed to open %s\n", path);
-            already_warned = 1;
-        }
-        return -errno;
+    if (mixer == NULL) {
+        ALOGE("Error opening mixer 0");
+        return -1;
     }
+
+    ctl = mixer_get_ctl_by_name(mixer, AMP_MIXER_CTL);
+    if (ctl == NULL) {
+        mixer_close(mixer);
+        ALOGE("%s: Could not find %s\n", __func__, AMP_MIXER_CTL);
+        return -ENODEV;
+    }
+
+    type = mixer_ctl_get_type(ctl);
+    if (type != MIXER_CTL_TYPE_ENUM) {
+        ALOGE("%s: %s is not supported\n", __func__, AMP_MIXER_CTL);
+        mixer_close(mixer);
+        return -ENOTTY;
+    }
+
+    mixer_ctl_set_value(ctl, 0, enable);
+    mixer_close(mixer);
+    return 0;
 }
 
-static inline int amplifier_enable() {
-  return write_int(DEVICE_PATH, 1);
-}
-
-static inline int amplifier_disable() {
-  return write_int(DEVICE_PATH, 0);
-}
-
-int audio_extn_perf_lock_init(void)
+static int amp_set_mode(struct amplifier_device *device, audio_mode_t mode)
 {
     int ret = 0;
-    if (qcopt_handle == NULL) {
-        if (property_get("ro.vendor.extension_library",
-                         opt_lib_path, NULL) <= 0) {
-            ALOGE("%s: Failed getting perf property \n", __func__);
-            ret = -EINVAL;
-            goto err;
-        }
-        if ((qcopt_handle = dlopen(opt_lib_path, RTLD_NOW)) == NULL) {
-            ALOGE("%s: Failed to open perf handle \n", __func__);
-            ret = -EINVAL;
-            goto err;
-        } else {
-            perf_lock_acq = (perf_lock_acquire_t)dlsym(qcopt_handle,
-                                                       "perf_lock_acq");
-            if (perf_lock_acq == NULL) {
-                ALOGE("%s: Perf lock Acquire NULL \n", __func__);
-                ret = -EINVAL;
-                goto err;
-            }
-            perf_lock_rel = (perf_lock_release_t)dlsym(qcopt_handle,
-                                                       "perf_lock_rel");
-            if (perf_lock_rel == NULL) {
-                ALOGE("%s: Perf lock Release NULL \n", __func__);
-                ret = -EINVAL;
-                goto err;
-            }
-            ALOGE("%s: Perf lock handles Success \n", __func__);
-        }
-    }
-err:
+    amp_device_t *dev = (amp_device_t *) device;
+
+    dev->mode = mode;
     return ret;
 }
 
-void audio_extn_perf_lock_acquire(int *handle, int duration,
-                                 int *perf_lock_opts, int size)
-{
+#define SMART_PA_DEVICES_MASK \
+    (AUDIO_DEVICE_OUT_EARPIECE | AUDIO_DEVICE_OUT_SPEAKER | AUDIO_DEVICE_OUT_WIRED_HEADSET | \
+     AUDIO_DEVICE_OUT_WIRED_HEADPHONE)
 
-    if (!perf_lock_opts || !size || !perf_lock_acq || !handle) {
-        ALOGE("%s: Incorrect params, Failed to acquire perf lock, err ",
-              __func__);
-        return;
+static int amp_enable_output_devices(struct amplifier_device *device, uint32_t devices, bool enable)
+{
+    amp_device_t *dev = (amp_device_t *) device;
+    int ret;
+
+    if ((devices & SMART_PA_DEVICES_MASK) != 0) {
+        if (enable) {
+            smart_pa_mode_t mode;
+
+            switch(dev->mode) {
+            case AUDIO_MODE_IN_CALL: mode = SMART_PA_FOR_VOICE; break;
+            case AUDIO_MODE_IN_COMMUNICATION: mode = SMART_PA_FOR_VOIP; break;
+            default: mode = SMART_PA_FOR_AUDIO;
+            }
+            set_clocks_enabled(true);
+            if ((ret = exTfa98xx_speakeron(mode)) != 0) {
+                ALOGI("exTfa98xx_speakeron(%d) failed: %d\n", mode, ret);
+            }
+        } else {
+            if ((ret = exTfa98xx_speakeroff()) != 0) {
+                ALOGI("exTfa98xx_speakeroff failed: %d\n", ret);
+            }
+            set_clocks_enabled(false);
+        }
     }
-    //ALOGE("Acquiring perf lock");
-    /*
-     * Acquire performance lock for 1 sec during device path bringup.
-     * Lock will be released either after 1 sec or when perf_lock_release
-     * function is executed.
-     */
-    *handle = perf_lock_acq(*handle, duration, perf_lock_opts, size);
-    if (*handle <= 0)
-        ALOGE("%s: Failed to acquire perf lock, err: %d\n",
-              __func__, *handle);
-}
 
-void audio_extn_perf_lock_release(int *handle)
-{
-    if (perf_lock_rel && handle && (*handle > 0)) {
-        ALOGE("Releasing perf lock");
-        perf_lock_rel(*handle);
-        *handle = 0;
-    } else {
-        ALOGE("%s: Perf lock release error \n", __func__);
-    }
-}
-
-
-
-static int amp_set_input_devices(amplifier_device_t *device, uint32_t devices)
-{
-    return 0;
-}
-
-static int amp_set_output_devices(amplifier_device_t *device, uint32_t devices)
-{
-    /*ALOGE("amp_set_output_devices: %d", devices);
-    if (!is_speaker(devices)) {
-      speaker_ref_count = 0;
-      amplifier_disable();
-    }*/
-    return 0;
-}
-
-static int amp_enable_output_devices(amplifier_device_t *device,
-        uint32_t devices, bool enable)
-{
-    ALOGE("amp_enable_output_devices: %d, %d", devices, enable);
-    if (is_speaker(devices) && !enable) {
-      speaker_ref_count = 0;
-    }
-    if (is_speaker(devices) && enable) {
-      amplifier_enable();
-    }
-    if (is_speaker(devices) && !enable) {
-      amplifier_disable();
-    }
-    if (enable) {
-      if (!lock_ref) {
-        audio_extn_perf_lock_acquire(&perf_lock_handle, 0,
-                                       perf_lock_opts,
-                                       perf_lock_opts_size);
-      }
-      lock_ref++;
-    } else {
-      lock_ref--;
-      if (!lock_ref) {
-        audio_extn_perf_lock_release(&perf_lock_handle);
-      }
-    }
-    return 0;
-}
-
-static int amp_enable_input_devices(amplifier_device_t *device,
-        uint32_t devices, bool enable)
-{
-    return 0;
-}
-
-static int amp_set_mode(amplifier_device_t *device, audio_mode_t mode)
-{
-    return 0;
-}
-
-static int amp_output_stream_start(amplifier_device_t *device,
-        struct audio_stream_out *stream, bool offload)
-{
-  /*  struct stream_out *out = (struct stream_out*) stream;
-    uint32_t devices = out->devices;
-    ALOGE("amp_output_stream_start: %d", devices);
-    if (is_speaker(devices)) {
-      if (!speaker_ref_count) {
-        amplifier_enable();
-      }
-      speaker_ref_count++;
-    }*/
-    return 0;
-}
-
-static int amp_input_stream_start(amplifier_device_t *device,
-        struct audio_stream_in *stream)
-{
-    return 0;
-}
-
-static int amp_output_stream_standby(amplifier_device_t *device,
-        struct audio_stream_out *stream)
-{
-    /*struct stream_out *out = (struct stream_out*) stream;
-    uint32_t devices = out->devices;
-    ALOGE("amp_output_stream_standby: %d", devices);
-    if (is_speaker(devices)) {
-      speaker_ref_count--;
-      if (speaker_ref_count == 0) {
-        amplifier_disable();
-      }
-    }*/
-    return 0;
-}
-
-static int amp_input_stream_standby(amplifier_device_t *device,
-        struct audio_stream_in *stream)
-{
-    return 0;
-}
-
-static int amp_set_parameters(struct amplifier_device *device,
-        struct str_parms *parms)
-{
     return 0;
 }
 
 static int amp_dev_close(hw_device_t *device)
 {
-    if (device)
-        free(device);
+    amp_device_t *dev = (amp_device_t *) device;
+
+    free(dev);
+
     return 0;
 }
 
-static int amp_module_open(const hw_module_t *module, const char *name,
+static int amp_module_open(const hw_module_t *module, const char *name UNUSED,
         hw_device_t **device)
 {
-    if (strcmp(name, AMPLIFIER_HARDWARE_INTERFACE)) {
-        ALOGE("%s:%d: %s does not match amplifier hardware interface name\n",
-                __func__, __LINE__, name);
-        return -ENODEV;
+    int ret;
+
+    if (amp_dev) {
+        ALOGE("%s:%d: Unable to open second instance of the amplifier\n", __func__, __LINE__);
+        return -EBUSY;
     }
 
-    amplifier_device_t *amp_dev = calloc(1, sizeof(amplifier_device_t));
+    amp_dev = calloc(1, sizeof(amp_device_t));
     if (!amp_dev) {
-        ALOGE("%s:%d: Unable to allocate memory for amplifier device\n",
-                __func__, __LINE__);
+        ALOGE("%s:%d: Unable to allocate memory for amplifier device\n", __func__, __LINE__);
         return -ENOMEM;
     }
 
-    audio_extn_perf_lock_init();
+    amp_dev->amp_dev.common.tag = HARDWARE_DEVICE_TAG;
+    amp_dev->amp_dev.common.module = (hw_module_t *) module;
+    amp_dev->amp_dev.common.version = HARDWARE_DEVICE_API_VERSION(1, 0);
+    amp_dev->amp_dev.common.close = amp_dev_close;
 
-    amp_dev->common.tag = HARDWARE_DEVICE_TAG;
-    amp_dev->common.module = (hw_module_t *) module;
-    amp_dev->common.version = HARDWARE_DEVICE_API_VERSION(1, 0);
-    amp_dev->common.close = amp_dev_close;
-
-    amp_dev->set_input_devices = amp_set_input_devices;
-    amp_dev->set_output_devices = amp_set_output_devices;
-    amp_dev->enable_output_devices = amp_enable_output_devices;
-    amp_dev->enable_input_devices = amp_enable_input_devices;
-    amp_dev->set_mode = amp_set_mode;
-    amp_dev->output_stream_start = amp_output_stream_start;
-    amp_dev->input_stream_start = amp_input_stream_start;
-    amp_dev->output_stream_standby = amp_output_stream_standby;
-    amp_dev->input_stream_standby = amp_input_stream_standby;
-    amp_dev->set_parameters = amp_set_parameters;
+    amp_dev->amp_dev.set_input_devices = NULL;
+    amp_dev->amp_dev.set_output_devices = NULL;
+    amp_dev->amp_dev.enable_input_devices = NULL;
+    amp_dev->amp_dev.enable_output_devices = amp_enable_output_devices;
+    amp_dev->amp_dev.set_mode = amp_set_mode;
+    amp_dev->amp_dev.output_stream_start = NULL;
+    amp_dev->amp_dev.input_stream_start = NULL;
+    amp_dev->amp_dev.output_stream_standby = NULL;
+    amp_dev->amp_dev.input_stream_standby = NULL;
 
     *device = (hw_device_t *) amp_dev;
+
+    set_clocks_enabled(true);
+    if ((ret = exTfa98xx_calibration()) != 0) {
+        ALOGI("exTfa98xx_calibration failed: %d\n", ret);
+    }
+    set_clocks_enabled(false);
 
     return 0;
 }
@@ -336,8 +184,8 @@ amplifier_module_t HAL_MODULE_INFO_SYM = {
         .module_api_version = AMPLIFIER_MODULE_API_VERSION_0_1,
         .hal_api_version = HARDWARE_HAL_API_VERSION,
         .id = AMPLIFIER_HARDWARE_MODULE_ID,
-        .name = "Markw audio amplifier HAL",
-        .author = "Nikolay Karev",
+        .name = "Kiwi audio amplifier HAL",
+        .author = "The CyanogenMod Open Source Project",
         .methods = &hal_module_methods,
     },
 };

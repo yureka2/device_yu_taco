@@ -16,7 +16,7 @@
 
 BOARD_VENDOR := xiaomi
 
-LOCAL_PATH := device/xiaomi/markw
+LOCAL_PATH := device/cmdc/wt89536
 
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
@@ -59,8 +59,8 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET := 0x01000000
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
-TARGET_KERNEL_CONFIG := markw_defconfig
-TARGET_KERNEL_SOURCE := kernel/xiaomi/markw
+TARGET_KERNEL_SOURCE := kernel/cmdc/msm8953
+TARGET_KERNEL_CONFIG := lineageos_wt89536_defconfig
 
 USE_CLANG_PLATFORM_BUILD := true
 
@@ -177,9 +177,9 @@ USE_DEVICE_SPECIFIC_GPS := true
 TARGET_NO_RPC := true
 
 # Init
-TARGET_INIT_VENDOR_LIB := libinit_markw
+TARGET_INIT_VENDOR_LIB := libinit_wt89536
 TARGET_PLATFORM_DEVICE_BASE := /devices/soc/
-TARGET_RECOVERY_DEVICE_MODULES := libinit_markw
+TARGET_RECOVERY_DEVICE_MODULES := libinit_wt89536
 
 # Keymaster
 TARGET_PROVIDES_KEYMASTER := true
@@ -253,4 +253,4 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 TARGET_HAS_HH_VSYNC_ISSUE := true
 
 # Inherit from the proprietary version
--include vendor/xiaomi/markw/BoardConfigVendor.mk
+-include vendor/cmdc/wt89536/BoardConfigVendor.mk

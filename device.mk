@@ -17,10 +17,10 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Get non-open-source specific aspects
-$(call inherit-product-if-exists, vendor/xiaomi/markw/markw-vendor.mk)
+$(call inherit-product, vendor/cmdc/wt89536/wt89536-vendor.mk)
 
 # Put ru_RU first in the list, so make it default.
-PRODUCT_LOCALES := ru_RU
+# PRODUCT_LOCALES := zh_CN
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
