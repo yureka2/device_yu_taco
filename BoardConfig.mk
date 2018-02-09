@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 The CyanogenMod Project
+# Copyright (C) 2017 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-BOARD_VENDOR := xiaomi
+BOARD_VENDOR := cmdc
 
 LOCAL_PATH := device/cmdc/wt89536
 
@@ -124,7 +124,7 @@ QCOM_BT_READ_ADDR_FROM_PROP := true
 # Once camera module can run in the native mode of the system (either
 # 32-bit or 64-bit), the following line should be deleted
 BOARD_QTI_CAMERA_32BIT_ONLY := true
-TARGET_TS_MAKEUP := true
+#TARGET_TS_MAKEUP := true
 #TARGET_HAS_LEGACY_CAMERA_HAL1 := true
 USE_DEVICE_SPECIFIC_CAMERA := true
 # for kernel headers
@@ -186,6 +186,11 @@ TARGET_PROVIDES_KEYMASTER := true
 
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
+
+# NFC
+BOARD_NFC_CHIPSET := pn548
+BOARD_NFC_DEVICE := "/dev/pn547"
+TARGET_USES_NQ_NFC := true
 
 # Media
 TARGET_USES_MEDIA_EXTENSIONS := true

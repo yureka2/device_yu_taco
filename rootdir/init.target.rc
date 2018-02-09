@@ -77,6 +77,16 @@ on post-fs-data
     chmod 0644 /sys/devices/platform/kcal_ctrl.0/kcalkcal_val
     chmod 0644 /sys/devices/platform/kcal_ctrl.0/kcalkcal_cont
 
+    chown media media /sys/bus/platform/drivers/msm8952-asoc-wcd/SmartPa_Ctl
+    chmod 0660 /sys/bus/platform/drivers/msm8952-asoc-wcd/SmartPa_Ctl
+    chown media media /dev/i2c-8
+    chmod 0660 /dev/i2c-8
+
+    chown nfc nfc /sys/devices/platform/nfc-power/nfc_power
+    chmod 0660 /sys/devices/platform/nfc-power/nfc_power
+    chown nfc nfc /dev/pn547
+    chmod 0660 /dev/pn547
+    
 #start camera server as daemon
 service qcamerasvr /system/bin/mm-qcamera-daemon
     class late_start
