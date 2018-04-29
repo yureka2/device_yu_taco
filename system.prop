@@ -66,6 +66,10 @@ persist.dpm.nsrm.bkg.evt=3955
 # Coresight
 persist.debug.coresight.config=stm-events
 
+# Fast charing
+persist.usb.hvdcp.detect=true
+
+
 # Display
 persist.debug.wfd.enable=1
 persist.hwc.enable_vds=1
