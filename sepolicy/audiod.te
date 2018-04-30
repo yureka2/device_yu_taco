@@ -1,2 +1,0 @@
-allow audiod audiod_exec:file { read open };
-allow audiod audiod:dir getattr;

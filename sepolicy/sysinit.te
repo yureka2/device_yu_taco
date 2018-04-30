@@ -1,3 +1,0 @@
-allow sysinit sysfs:file { setattr getattr open write };
-allow sysinit sysfs_devices_system_cpu:file { setattr write };
-allow sysinit sysinit:capability { fsetid fowner dac_override };

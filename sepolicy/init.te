@@ -1,2 +1,0 @@
-allow init init:netlink_socket read;
-allow init init:dir getattr;

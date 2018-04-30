@@ -1,3 +1,0 @@
-allow rild system_prop:property_service set;
-allow rild tombstone_data_file:dir search;
-allow rild rild:dir getattr;

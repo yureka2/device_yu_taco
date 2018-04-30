@@ -1,3 +1,0 @@
-allow logd logd:lnk_file read;
-allow logd logd:dir getattr;
-allow logd logd:dir getattr;
