@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-BOARD_VENDOR := cmdc
+BOARD_VENDOR := yu
 
-LOCAL_PATH := device/cmdc/wt89536
+LOCAL_PATH := device/yu/yureka2
 
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
@@ -59,8 +59,8 @@ BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_RAMDISK_OFFSET := 0x01000000
 BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
-TARGET_KERNEL_SOURCE := kernel/cmdc/msm8953
-TARGET_KERNEL_CONFIG := lineageos_wt89536_defconfig
+TARGET_KERNEL_SOURCE := kernel/yu/msm8953
+TARGET_KERNEL_CONFIG := lineageos_yureka2_defconfig
 
 USE_CLANG_PLATFORM_BUILD := true
 
@@ -252,4 +252,4 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 # TARGET_HAS_HH_VSYNC_ISSUE := true
 
 # Inherit from the proprietary version
--include vendor/cmdc/wt89536/BoardConfigVendor.mk
+-include vendor/yu/yureka2/BoardConfigVendor.mk

@@ -17,7 +17,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Get non-open-source specific aspects
-$(call inherit-product, vendor/cmdc/wt89536/wt89536-vendor.mk)
+$(call inherit-product, vendor/yu/yureka2/yureka2-vendor.mk)
 
 # Put ru_RU first in the list, so make it default.
 # PRODUCT_LOCALES := zh_CN
