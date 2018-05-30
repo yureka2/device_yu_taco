@@ -18,7 +18,7 @@
 
 from hashlib import sha1
 
-device='yureka2'
+device='taco'
 vendor='yu'
 
 lines = [ line for line in open('proprietary-files-common.txt', 'r') ]

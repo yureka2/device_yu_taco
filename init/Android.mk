@@ -22,7 +22,7 @@ LOCAL_C_INCLUDES := \
     system/core/base/include \
     system/core/init
 LOCAL_CFLAGS := -Wall -DANDROID_TARGET=\"$(TARGET_BOARD_PLATFORM)\"
-LOCAL_SRC_FILES := init_wt89536.cpp
-LOCAL_MODULE := libinit_wt89536
+LOCAL_SRC_FILES := init_taco.cpp
+LOCAL_MODULE := libinit_taco
 
 include $(BUILD_STATIC_LIBRARY)

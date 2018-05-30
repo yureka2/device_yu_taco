@@ -1,3 +1,3 @@
-add_lunch_combo lineage_wt89536-eng
-add_lunch_combo lineage_wt89536-userdebug
-add_lunch_combo lineage_wt89536-user
+add_lunch_combo lineage_taco-eng
+add_lunch_combo lineage_taco-userdebug
+add_lunch_combo lineage_taco-user

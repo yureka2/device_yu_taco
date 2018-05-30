@@ -19,14 +19,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
 # Inherit from wt89536 device
-$(call inherit-product, device/yu/yureka2/device.mk)
+$(call inherit-product, device/yu/taco/device.mk)
 
 # Inherit some common CM stuff.
 $(call inherit-product, vendor/cm/config/common_full_phone.mk)
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := lineage_yureka2
-PRODUCT_DEVICE := yureka2
+PRODUCT_NAME := lineage_taco
+PRODUCT_DEVICE := taco
 PRODUCT_BRAND := YU
 PRODUCT_MODEL := yu2
 PRODUCT_MANUFACTURER := YUREKA2

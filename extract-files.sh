@@ -17,7 +17,7 @@
 
 set -e
 
-DEVICE=yureka2
+DEVICE=taco
 VENDOR=yu
 
 # Load extract_utils and do some sanity checks
