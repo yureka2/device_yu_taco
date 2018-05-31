@@ -26,15 +26,16 @@ $(call inherit-product, vendor/cm/config/common_full_phone.mk)
 
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := lineage_taco
-PRODUCT_DEVICE := taco
+PRODUCT_DEVICE := yureka2
 PRODUCT_BRAND := YU
-PRODUCT_MODEL := yu2
+PRODUCT_MODEL := taco
 PRODUCT_MANUFACTURER := YUREKA2
 
-PRODUCT_GMS_CLIENTID_BASE := android-cmcc
+PRODUCT_GMS_CLIENTID_BASE := android-yu
 
 TARGET_VENDOR := yu
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    BUILD_FINGERPRINT="cmcc/wt89536/wt89536:6.0.1/MMB29M/20170901:user/release-keys" \
-    PRIVATE_BUILD_DESC="wt89536-user 6.0.1 MMB29M 20170901 release-keys"
+    BUILD_FINGERPRINT="YU/YUREKA2/YUREKA2:6.0.1/MMB29M/01112051:user/release-keys" \
+    PRIVATE_BUILD_DESC="wt89536-user 6.0.1 MMB29M eng.zhouchao.20170723.172948 release-keys"
+
