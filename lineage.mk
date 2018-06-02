@@ -26,7 +26,7 @@ $(call inherit-product, vendor/cm/config/common_full_phone.mk)
 
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := lineage_taco
-PRODUCT_DEVICE := yureka2
+PRODUCT_DEVICE := taco
 PRODUCT_BRAND := YU
 PRODUCT_MODEL := taco
 PRODUCT_MANUFACTURER := YUREKA2
