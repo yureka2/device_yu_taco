@@ -36,6 +36,5 @@ PRODUCT_GMS_CLIENTID_BASE := android-yu
 TARGET_VENDOR := yu
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    BUILD_FINGERPRINT="YU/YUREKA2/YUREKA2:6.0.1/MMB29M/01112051:user/release-keys" \
-    PRIVATE_BUILD_DESC="wt89536-user 6.0.1 MMB29M eng.zhouchao.20170723.172948 release-keys"
-
+    BUILD_FINGERPRINT="xiaomi/mido/mido:7.0/NRD90M/V8.5.4.0.NCFMIED:user/release-keys" \
+    PRIVATE_BUILD_DESC="mido-user 7.0 NRD90M V8.5.4.0.NCFMIED release-keys"
