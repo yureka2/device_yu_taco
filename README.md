@@ -1,6 +1,6 @@
 Copyright 2017 - The Mokee Opensource Project
 
-Device configuration for Xiaomi Redmi 4 (_markw_)
+Device configuration for YU Yureka 2(_taco_)
 =====================================================
 
 Basic   | Spec Sheet
@@ -25,5 +25,5 @@ Als/ps | Yes (Liteon LTR55X)
 LED | Yes (Awinic AW2013)
 Release Date | November 2016
 
-![YU Yureka 2](https://m.gsmarena.com/yu_yureka_2-pictures-8864.php "yureka2")
+![YU Yureka 2](https://cdn2.gsmarena.com/vv/pics/yureka/yu-yureka2-yu5551-1.jpg "yureka2")
 
